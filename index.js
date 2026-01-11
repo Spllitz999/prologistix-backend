@@ -2,68 +2,87 @@ import express from "express";
 import axios from "axios";
 import cors from "cors";
 
-
 const app = express();
-app.use(cors());
-
+const PORT = process.env.PORT || 10000;
 const VTC_ID = 85973;
 
-// 🔹 Root check (for browser)
+app.use(cors());
+app.use(express.json());
+
+/* ======================
+   ROOT & HEALTH CHECKS
+====================== */
+
+// Root (browser check)
 app.get("/", (req, res) => {
   res.send("PROLOGISTIX Backend is running");
 });
 
-// 🔹 Health check
+// Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-// 🔹 Stats
+/* ======================
+   VTC STATS
+====================== */
+
 app.get("/api/stats", async (req, res) => {
   try {
-/*    const r = await axios.get(`https://api.truckersmp.com/v2/vtc/${VTC_ID}`);
-    const vtc = r.data.response;
+    const response = await axios.get(
+      `https://api.truckersmp.com/v2/vtc/${VTC_ID}`
+    );
+
+    const vtc = response.data.response;
+    const members = vtc?.members || [];
 
     res.json({
-      drivers: vtc.members.length,
+      drivers: members.length,
       distance: vtc.distance,
       convoys: vtc.convoys
     });
-  } catch (err) {
-    console.error(err);
+
+  } catch (error) {
+    console.error("Stats fetch error:", error.message);
     res.status(500).json({ error: "Failed to fetch stats" });
   }
-*/
-const res = await fetch("https://api.truckersmp.com/v2/vtc/85973");
-const json = await res.json();
-
-const members = json?.response?.members || [];
-
-console.log("Members fetched:", members.length);
-
 });
 
-// 🔹 Drivers
+/* ======================
+   DRIVERS LIST
+====================== */
+
 app.get("/api/drivers", async (req, res) => {
   try {
-    const r = await axios.get(`https://api.truckersmp.com/v2/vtc/${VTC_ID}`);
+    const response = await axios.get(
+      `https://api.truckersmp.com/v2/vtc/${VTC_ID}`
+    );
 
-    const drivers = r.data.response.members.map(m => ({
-      name: m.username,
-      role: m.role,
-      steamId: m.steamID,
-      joinedAt: m.joinedAt
+    const members = response.data.response?.members || [];
+
+    const drivers = members.map(member => ({
+      id: member.id,
+      name: member.username,
+      role: member.role,
+      steamId: member.steamID,
+      joinedAt: member.joinedAt
     }));
 
-    res.json(drivers);
-  } catch (err) {
-    console.error(err);
+    res.json({
+      total: drivers.length,
+      drivers
+    });
+
+  } catch (error) {
+    console.error("Drivers fetch error:", error.message);
     res.status(500).json({ error: "Failed to fetch drivers" });
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () =>
-  console.log(`Backend running on port ${PORT}`)
-);
+/* ======================
+   START SERVER
+====================== */
 
+app.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
+});
