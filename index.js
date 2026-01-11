@@ -21,7 +21,7 @@ app.get("/api/health", (req, res) => {
 // 🔹 Stats
 app.get("/api/stats", async (req, res) => {
   try {
-    const r = await axios.get(`https://api.truckersmp.com/v2/vtc/${VTC_ID}`);
+/*    const r = await axios.get(`https://api.truckersmp.com/v2/vtc/${VTC_ID}`);
     const vtc = r.data.response;
 
     res.json({
@@ -33,6 +33,14 @@ app.get("/api/stats", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Failed to fetch stats" });
   }
+*/
+const res = await fetch("https://api.truckersmp.com/v2/vtc/85973");
+const json = await res.json();
+
+const members = json?.response?.members || [];
+
+console.log("Members fetched:", members.length);
+
 });
 
 // 🔹 Drivers
