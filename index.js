@@ -1,32 +1,60 @@
-require('dotenv').config();
-const { Client, GatewayIntentBits, Events } = require('discord.js');
+import express from "express";
+import axios from "axios";
+import cors from "cors";
 
-const client = new Client({
-  intents: [GatewayIntentBits.Guilds],
+const app = express();
+app.use(cors());
+
+const VTC_ID = 85973;
+
+// 🔹 Root check (for browser)
+app.get("/", (req, res) => {
+  res.send("PROLOGISTIX Backend is running");
 });
 
-client.once(Events.ClientReady, () => {
-  console.log(`Logged in as ${client.user.tag}`);
+// 🔹 Health check
+app.get("/api/health", (req, res) => {
+  res.json({ status: "ok" });
 });
 
-client.on(Events.InteractionCreate, async interaction => {
+// 🔹 Stats
+app.get("/api/stats", async (req, res) => {
   try {
-    if (!interaction.isChatInputCommand()) return;
+    const r = await axios.get(`https://api.truckersmp.com/v2/vtc/${VTC_ID}`);
+    const vtc = r.data.response;
 
-    if (interaction.commandName === 'ping') {
-      await interaction.reply({ content: 'Pong!', ephemeral: false });
-    }
-  } catch (error) {
-    console.error('Interaction error:', error);
-
-    if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({
-        content: 'Something went wrong.',
-        ephemeral: true,
-      });
-    }
+    res.json({
+      drivers: vtc.members.length,
+      distance: vtc.distance,
+      convoys: vtc.convoys
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch stats" });
   }
 });
 
-client.login(process.env.TOKEN);
+// 🔹 Drivers
+app.get("/api/drivers", async (req, res) => {
+  try {
+    const r = await axios.get(`https://api.truckersmp.com/v2/vtc/${VTC_ID}`);
+
+    const drivers = r.data.response.members.map(m => ({
+      name: m.username,
+      role: m.role,
+      steamId: m.steamID,
+      joinedAt: m.joinedAt
+    }));
+
+    res.json(drivers);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch drivers" });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =>
+  console.log(`Backend running on port ${PORT}`)
+);
 
