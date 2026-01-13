@@ -15,6 +15,9 @@ import applicationsRoutes from "./routes/applications.js";
 
 const app = express();
 
+// Hash admin password once at startup for comparison
+const ADMIN_PASS_HASH = await bcrypt.hash(process.env.ADMIN_PASS || "", 10);
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,7 +25,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    httpOnly: true, // Prevent XSS
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: 'strict' // CSRF protection
+  }
 }));
 
 function requireAdmin(req, res, next) {
@@ -43,10 +52,7 @@ app.post("/login", async (req, res) => {
     return res.status(401).send("Invalid login");
   }
 
-  const match = await bcrypt.compare(
-    password,
-    await bcrypt.hash(process.env.ADMIN_PASS, 10)
-  );
+  const match = await bcrypt.compare(password, ADMIN_PASS_HASH);
 
   if (!match) {
     return res.status(401).send("Invalid login");
