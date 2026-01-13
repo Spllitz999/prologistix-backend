@@ -1,0 +1,122 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+body {
+  background: #0e0e0e;
+  color: #fff;
+}
+
+/* NAV */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  background: rgba(0,0,0,0.85);
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+}
+
+.nav-logo img {
+  height: 55px;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 700;
+}
+
+.btn {
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.primary {
+  background: #f5c400;
+  color: #000;
+}
+
+.outline {
+  border: 2px solid #f5c400;
+  color: #f5c400;
+}
+
+/* HERO */
+.hero {
+  height: 100vh;
+  background: url("https://images.unsplash.com/photo-1601050690597-df0568f70950") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-overlay {
+  background: rgba(0,0,0,0.7);
+  padding: 80px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+.hero h1 {
+  font-size: 3.8rem;
+  letter-spacing: 3px;
+}
+
+.hero p {
+  font-size: 1.4rem;
+  margin: 20px 0 40px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* SECTIONS */
+.section {
+  padding: 100px 60px;
+  text-align: center;
+}
+
+.dark {
+  background: #141414;
+}
+
+.darker {
+  background: #0b0b0b;
+}
+
+.section h2 {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+}
+
+.section p {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: auto;
+}
+
+/* FOOTER */
+footer {
+  padding: 30px;
+  background: #000;
+  text-align: center;
+  font-size: 0.9rem;
+}
+

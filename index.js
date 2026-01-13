@@ -18,6 +18,9 @@ const app = express();
 // Hash admin password once at startup for comparison
 const ADMIN_PASS_HASH = await bcrypt.hash(process.env.ADMIN_PASS || "", 10);
 
+// Public assets (frontend marketing site)
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,7 +45,7 @@ function requireAdmin(req, res, next) {
 /* ---------- AUTH ---------- */
 
 app.get("/login", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/login.html"));
+  res.sendFile(path.join(__dirname, "public", "admin", "login.html"));
 });
 
 app.post("/login", async (req, res) => {
@@ -72,11 +75,11 @@ app.use("/api/applications", requireAdmin, applicationsRoutes);
 
 // Serve admin dashboard (index.html) at /admin
 app.get("/admin", requireAdmin, (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "admin", "index.html"));
 });
 
 // Serve other static files from public folder
-app.use("/admin", requireAdmin, express.static(path.join(__dirname, "public")));
+app.use("/admin", requireAdmin, express.static(path.join(__dirname, "public", "admin")));
 
 /* ---------- SERVER ---------- */
 
