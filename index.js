@@ -63,6 +63,13 @@ app.get("/logout", (req, res) => {
 /* ---------- PROTECTED ---------- */
 
 app.use("/api/applications", requireAdmin, applicationsRoutes);
+
+// Serve admin dashboard (index.html) at /admin
+app.get("/admin", requireAdmin, (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Serve other static files from public folder
 app.use("/admin", requireAdmin, express.static(path.join(__dirname, "public")));
 
 /* ---------- SERVER ---------- */
