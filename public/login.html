@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Login</title>
+  <style>
+    body {
+      background:#111;
+      color:#fff;
+      font-family:Arial;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+    }
+    form {
+      background:#1c1c1c;
+      padding:30px;
+      width:300px;
+    }
+    input, button {
+      width:100%;
+      padding:10px;
+      margin-top:10px;
+    }
+    button {
+      background:#f5c400;
+      border:none;
+      font-weight:bold;
+    }
+  </style>
+</head>
+<body>
+
+<form method="POST" action="/login">
+  <h2>Admin Login</h2>
+  <input name="username" placeholder="Username" required>
+  <input name="password" type="password" placeholder="Password" required>
+  <button type="submit">Login</button>
+</form>
+
+</body>
+</html>

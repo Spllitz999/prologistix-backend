@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Prologistix Admin Dashboard</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #0b0e13;
+  color: #eaeaea;
+}
+
+/* ===== HEADER ===== */
+header {
+  background: #11151d;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #1f2633;
+}
+
+header h1 {
+  color: #f5c400;
+  font-size: 22px;
+  margin: 0;
+}
+
+header a {
+  color: #fff;
+  text-decoration: none;
+  background: #1f2633;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+header a:hover {
+  background: #f5c400;
+  color: #000;
+}
+
+/* ===== MAIN ===== */
+main {
+  padding: 40px;
+}
+
+.section-title {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #f5c400;
+}
+
+/* ===== TABLE ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #11151d;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+th {
+  background: #1a2030;
+  text-align: left;
+  padding: 14px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+td {
+  padding: 14px;
+  border-top: 1px solid #1f2633;
+  font-size: 14px;
+}
+
+/* ===== STATUS BADGES ===== */
+.status {
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
+}
+
+.pending { background: #444; }
+.approved { background: #1fa971; color: #000; }
+.rejected { background: #c0392b; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.approve {
+  background: #1fa971;
+  color: #000;
+}
+
+.reject {
+  background: #c0392b;
+  color: #fff;
+}
+
+.btn:hover {
+  opacity: 0.85;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Prologistix Admin Panel</h1>
+  <a href="/logout">Logout</a>
+</header>
+
+<main>
+  <div class="section-title">Driver Applications</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Discord</th>
+        <th>TruckersMP ID</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="applications"></tbody>
+  </table>
+</main>
+
+<script>
+fetch("/api/applications")
+  .then(res => res.json())
+  .then(data => {
+    const table = document.getElementById("applications");
+
+    table.innerHTML = "";
+
+    data.forEach(app => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${app.name}</td>
+        <td>${app.discord}</td>
+        <td>${app.truckersmp}</td>
+        <td>
+          <span class="status ${app.status}">
+            ${app.status.toUpperCase()}
+          </span>
+        </td>
+        <td>
+          <button class="btn approve" onclick="approve(${app.id})">Approve</button>
+          <button class="btn reject" onclick="reject(${app.id})">Reject</button>
+        </td>
+      `;
+
+      table.appendChild(tr);
+    });
+  });
+
+function approve(id) {
+  fetch(`/api/applications/${id}/approve`, { method: "POST" })
+    .then(() => location.reload());
+}
+
+function reject(id) {
+  fetch(`/api/applications/${id}/reject`, { method: "POST" })
+    .then(() => location.reload());
+}
+</script>
+
+</body>
+</html>
+

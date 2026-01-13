@@ -6,10 +6,13 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "cors": "^2.8.5",
     "axios": "^1.6.7",
-    "discord.js": "^14.15.3"
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^12.6.0",
+    "cors": "^2.8.5",
+    "discord.js": "^14.15.3",
+    "dotenv": "^17.2.3",
+    "express": "^4.19.2",
+    "express-session": "^1.18.2"
   }
 }
-
